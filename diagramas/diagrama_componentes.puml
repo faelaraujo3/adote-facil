@@ -1,0 +1,51 @@
+@startuml
+!theme plain
+skinparam componentStyle rectangle
+skinparam arrowColor #555555
+
+title Diagrama de Componentes - Adote Fácil (Atualizado)
+
+node "Dispositivo do Usuário (Browser)" #E0F7FA {
+    component "Frontend\n(Next.js 15 / React 19)" #80DEEA {
+        component "Interface Gráfica\n(Styled Components / RHF)" as UI #White
+        component "Cliente HTTP\n(Axios)" as HttpClient #White
+        
+        UI --> HttpClient : "envia/recebe dados"
+    }
+}
+
+interface "API REST\n(Porta 8080)" as API #FFCC80
+
+node "Servidor Backend (Node.js)" #f8e9e9ff {
+    component "Aplicação Express.js" #d6a5a5ff {
+        component "App & Roteador\n(app.ts / routes.ts)" as Roteador #White
+        component "Processamento de Arquivos\n(Multer - Memory Storage)" as Upload #White
+        
+        component "Módulo de Usuários" as ModUtilizadores #White
+        component "Módulo de Animais" as ModAnimais #White
+        component "Módulo de Chat" as ModChat #White
+        
+        component "Prisma ORM" as Prisma #White
+        
+        Roteador --> Upload : "intercepta multipart/form-data"
+        Roteador --> ModUtilizadores
+        Roteador --> ModAnimais
+        Roteador --> ModChat
+        
+        Upload --> ModAnimais : "repassa buffer da imagem"
+        
+        ModUtilizadores --> Prisma
+        ModAnimais --> Prisma
+        ModChat --> Prisma
+    }
+}
+
+database "Banco de Dados\nPostgreSQL" as BD #FFF59D
+
+' Relações de comunicação externas
+HttpClient -[#FF9800,bold]-( API : "JSON / Multipart"
+API -[#FF9800,bold]- Roteador : "HTTP"
+
+Prisma .[#1976D2,bold].> BD : "TCP/IP"
+
+@enduml
