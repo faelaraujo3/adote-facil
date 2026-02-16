@@ -35,7 +35,7 @@ export class GetAvailableAnimalsService {
       name,
     })
 
-    const formattedAnimals = animals.map((animal) => {
+    const formattedAnimals = animals.map((animal: { images: any[] }) => {
       return {
         ...animal,
         images: animal.images.map((image) => {

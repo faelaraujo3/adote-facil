@@ -49,7 +49,7 @@ export function DefaultLoggedPageLayout({
         </S.UserInfo>
         <UserMenu />
       </S.AsideMenu>
-      {!mobileMenuIsOpen ? <S.PageContent>{children}</S.PageContent> : null}
+      {mobileMenuIsOpen ? null : <S.PageContent>{children}</S.PageContent>}
     </S.Wrapper>
   )
 }

@@ -1,4 +1,5 @@
 import { Animal } from '@/@types/animal'
+import { useMemo } from "react"
 import { createContext, ReactNode, useState } from 'react'
 
 interface AnimalsContextType {
@@ -20,16 +21,22 @@ export function AnimalsContextProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AnimalsContext.Provider
-      value={{
-        availableAnimals,
-        setAvailableAnimals,
-        getAnimalById,
-        userAnimals,
-        setUserAnimals,
-      }}
-    >
-      {children}
-    </AnimalsContext.Provider>
-  )
+  <AnimalsContext.Provider
+    value={useMemo(() => ({
+      availableAnimals,
+      setAvailableAnimals,
+      getAnimalById,
+      userAnimals,
+      setUserAnimals,
+    }), [
+      availableAnimals,
+      setAvailableAnimals,
+      getAnimalById,
+      userAnimals,
+      setUserAnimals,
+    ])}
+  >
+    {children}
+  </AnimalsContext.Provider>
+ )
 }

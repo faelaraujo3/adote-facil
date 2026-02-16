@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 
 export class Authenticator {
-  private secret = process.env.JWT_SECRET || 'secret'
+  private readonly secret = process.env.JWT_SECRET || 'secret'
 
   generateToken(payload: object): string {
     return jwt.sign(payload, this.secret, { expiresIn: '1h' })
