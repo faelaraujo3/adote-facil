@@ -34,7 +34,7 @@ Por fim, a decisão de usar o **Docker Compose** é excelente para contornar o f
 
 ## 2. Análise do Diagrama de Pacotes
 
-Para visualizar melhor como esses arquivos e pastas estão organizados, montei um **Diagrama de Pacotes** mapeando a estrutura física do repositório e como essas partes dependem umas das outras. A própria divisão física das pastas (Frontend e Backend) já reflete a divisão lógica dos contêineres do Docker.
+Quanto a representação em diagrama, optei por fazer o **Diagrama de Pacotes** usando o PlantUML, para visualizar melhor como esses arquivos e pastas estão organizados, mapeando a estrutura física do repositório e como essas partes dependem umas das outras. A própria divisão física das pastas (Frontend e Backend) já reflete a divisão lógica dos contêineres do Docker.
 
 ### 2.1. O lado do Frontend
 No pacote do Frontend, a estrutura segue o padrão do Next.js, mas com algumas separações bem interessantes:
