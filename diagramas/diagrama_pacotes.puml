@@ -1,0 +1,188 @@
+@startuml Diagrama pacotes
+
+skinparam ranksep 30
+skinparam nodesep 20
+skinparam padding 2
+skinparam packagePadding 12
+skinparam defaultFontSize 12
+skinparam linetype ortho
+skinparam shadowing false
+skinparam ArrowColor #455A64
+
+skinparam package {
+    BackgroundColor<<Frontend>> #E3F2FD
+    BackgroundColor<<Backend>> #FFF0F0
+    BorderColor #263238
+}
+
+title
+<size:20>Diagrama de Pacotes</size>
+<size:15><i>Rafael Araújo de Souza (23.2.8072)</i></size>
+end title
+
+package "Frontend (Next.js App Router)" <<Frontend>> {
+    
+    package "src/app (Páginas e Rotas)" #BBDEFB {
+        package "Rotas Públicas" {
+            component "login" as f_app_login
+            component "cadastro" as f_app_reg
+        }
+        package "area_logada (Privadas)" as f_app_logged {
+            component "animais_disponiveis" as f_app_disp
+            component "meus_animais" as f_app_meus
+            component "disponibilizar_animal" as f_app_novo
+            component "conversas" as f_app_chat
+            component "editar_dados" as f_app_edit
+        }
+    }
+
+    package "src/layout" #90CAF9 {
+        component "DefaultLoggedPageLayout" as f_layout
+    }
+
+    package "src/components (UI Interativa)" #90CAF9 {
+        package "Forms e Inputs" as f_comps_forms {
+            component "AnimalRegisterForm" as fc_reg_anim
+            component "AnimalFilterForm" as fc_filt_anim
+            component "UpdateUserInfoForm" as fc_upd_user
+            component "PasswordInput" as fc_pwd
+            component "DefaultSelect" as fc_sel
+        }
+        package "Cards e Módulos" as f_comps_mods {
+            component "AnimalCard" as fc_card
+            component "Chat" as fc_chat
+            component "UserMenu" as fc_menu
+            component "EmptyAnimals" as fc_empty
+        }
+        package "UI Compartilhado" as f_comps_shared {
+            component "Button" as fc_btn
+            component "DefaultDialog" as fc_dlg
+        }
+    }
+    
+    package "src/providers & contexts" #64B5F6 {
+        component "AnimalsContext" as fctx_anim
+        component "ThemeClientProvider" as fctx_theme
+    }
+
+    package "src/api (Integração com Axios)" #42A5F5 {
+        component "Animal Requests" as fa_anim
+        component "User Requests" as fa_user
+        component "Chat Requests" as fa_chat
+    }
+
+    package "src/utils (Domínio Front)" #2196F3 {
+        component "helpers (get-user-data.ts)" as f_helpers
+        component "enums & constants" as f_enums
+    }
+}
+
+package "Backend (Express API)" <<Backend>> {
+
+    package "Camada de Apresentação" #FADBD8 {
+        component "routes.ts" as b_routes #F5B7B1
+        package "controllers" #F5B7B1 {
+            package "animal_ctrl" as b_ctrl_a {
+                component "AnimalController" as bc_anim
+            }
+            package "user_ctrl" as b_ctrl_u {
+                component "UserController" as bc_user
+            }
+            package "chat_ctrl" as b_ctrl_c {
+                component "ChatController" as bc_chat
+            }
+        }
+    }
+
+    package "Camada de Regras de Negócio" #E6B0AA {
+        package "services" #D98880 {
+            component "AnimalService" as bs_anim
+            component "UserService" as bs_user
+            component "ChatService" as bs_chat
+        }
+        component "middlewares/user-auth.ts" as b_mid #D98880
+    }
+
+    package "Camada de Acesso a Dados" #CD6155 {
+        package "repositories" #B75D54 {
+            component "AnimalRepository" as br_anim
+            component "AnimalImageRepo" as br_anim_img
+            component "UserRepository" as br_user
+            component "ChatRepository" as br_chat
+            component "UserMessageRepo" as br_msg
+        }
+        package "Prisma" #A04F47 {
+            component "Prisma Client" as b_prisma
+            component "Migrations" as b_migrations
+        }
+    }
+
+    package "Providers & Config" #FDF2F1 {
+        component "either.ts" as bu_either
+        component "multer.ts" as bu_multer
+        component "authenticator.ts" as bu_auth
+        component "encrypter.ts" as bu_crypt
+    }
+
+    component "Database" as db #c4c7c0
+}
+
+f_app_login -[hidden]r- f_app_reg
+fc_btn -[hidden]r- fc_dlg
+f_helpers -[hidden]r- f_enums
+
+f_app_logged ..> f_layout : envelopado por
+f_layout ..> fc_menu : renderiza
+f_app_disp ..> fc_filt_anim : usa
+f_app_disp ..> fc_card : usa
+f_app_novo ..> fc_reg_anim : usa
+f_app_chat ..> fc_chat : usa
+
+f_app_logged ..> fctx_anim : consome estado
+f_app_logged ..> f_helpers : carrega usuário
+f_comps_forms ..> f_enums : opções de select
+
+fctx_anim ..> fa_anim : busca dados
+f_comps_forms ..> fa_user : envia dados
+
+fa_anim ..> b_routes : HTTP/REST
+fa_user ..> b_routes : HTTP/REST
+fa_chat ..> b_routes : HTTP/REST
+
+b_routes ..> b_mid : autentica
+b_routes ..> bc_anim : roteia
+b_routes ..> bc_user : roteia
+b_routes ..> bc_chat : roteia
+
+bc_anim ..> bu_multer : upload
+bc_anim ..> bs_anim : delega
+bc_user ..> bs_user : delega
+bc_chat ..> bs_chat : delega
+
+bs_anim ..> bu_either : trata erros
+bs_user ..> bu_auth : gera JWT
+bs_user ..> bu_crypt : hash senha
+
+bs_anim ..> br_anim : persiste
+bs_anim ..> br_anim_img : salva imagens
+bs_user ..> br_user : persiste
+bs_chat ..> br_chat : persiste
+bs_chat ..> br_msg : salva mensagens
+
+br_anim ..> b_prisma : query
+br_user ..> b_prisma : query
+br_chat ..> b_prisma : query
+
+b_prisma ..> db : manipula dados
+b_migrations ..> db : aplica esquemas
+
+legend right
+  |= Cor |= Camada |
+  |<#E3F2FD>| Frontend (Interface e Roteamento) |
+  |<#FADBD8>| Apresentação Backend (Controllers) |
+  |<#E6B0AA>| Domínio de Negócio (Services) |
+  |<#CD6155>| Persistência de Dados (Prisma/Repos) |
+  |<#FDF2F1>| Infraestrutura, Providers e Utils |
+endlegend
+
+@enduml
