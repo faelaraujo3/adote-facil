@@ -37,7 +37,7 @@ Para sanar os pontos levantados na análise, a infraestrutura foi refatorada (se
 
 Abaixo encontram-se as configurações propostas e aplicadas.
 
-### 3.1. Configuração do Frontend (`next.config.ts`)
+### 3.1. Configuração do Frontend (`next.config.mjs`)
 
 Para viabilizar o Multi-stage no Next.js:
 
@@ -50,7 +50,7 @@ export default nextConfig
 
 ```
 
-### 3.2. Arquivo de Pipeline (`.github/workflows/ci-cd.yml`)
+### 3.2. Arquivo de Pipeline (`.github/workflows/experimento-ci-cd.yml`)
 
 ```yaml
 name: CI/CD Pipeline
